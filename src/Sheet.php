@@ -106,14 +106,8 @@ class Sheet
             $this->range('A', $startRowIndex, 'C')
         );
 
-        $array = new ScopedArray();
 
-        foreach ( $rows ?? [] as $row ) {
-            $scoped_key = $row[0];
-            $value = $row[1];
-            $array[$scoped_key] = $value;
-        }
-        return $array->getData();
+        return ScopedArray::arrayFromPairs($rows);
 
     }
 
@@ -134,22 +128,7 @@ class Sheet
         //the first row are headers
         $headers = array_shift($rows);
 
-        //the array with the results
-        $list = [];
-
-        foreach ( $rows as $row ) {
-
-            $element = new ScopedArray();
-            foreach ( $row as $index => $column ) {
-
-                $scoped_key = $headers[$index];
-                $value = $column;
-                $element[$scoped_key] = $value;
-            }
-
-            $list[] = $element->getData();
-        }
-        return $list;
+        return ScopedArray::arrayFromRows($headers, $rows);
     }
 
     /**

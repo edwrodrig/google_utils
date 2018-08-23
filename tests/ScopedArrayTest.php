@@ -56,4 +56,30 @@ class ScopedArrayTest extends TestCase
         $this->assertEquals(['name' => 'Edwin', 'surname' => 'Rodriguez', 'mail' => ['user' => 'edwin', 'domain' => 'mail.cl']], $array->getData());
 
     }
+
+    public function testArrayFromPairs() {
+        $this->assertEquals(['name' => 'Edwin', 'surname' => 'Rodriguez', 'mail' => ['user' => 'edwin', 'domain' => 'mail.cl']],
+            ScopedArray::arrayFromPairs([
+                ['name', 'Edwin'],
+                ['surname', 'Rodriguez'],
+                ['mail.user', 'edwin'],
+                ['mail.domain', 'mail.cl']
+            ]));
+    }
+
+    public function testArrayFromRows() {
+        $this->assertEquals(
+            [
+                ['name' => 'Edwin', 'surname' => 'Rodriguez'],
+                ['name' => 'Amanda', 'surname' => 'Morales']
+            ],
+            ScopedArray::arrayFromRows(
+                ['name', 'surname'],
+                [
+                    ['Edwin', 'Rodriguez'],
+                    ['Amanda', 'Morales']
+                ]
+            )
+        );
+    }
 }

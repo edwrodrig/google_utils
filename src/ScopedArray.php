@@ -83,4 +83,47 @@ class ScopedArray implements ArrayAccess
     public function getData() : array {
         return $this->data;
     }
+
+
+    /**
+     * Create an associative array from pairs of key values
+     * @param array $rows
+     * @return array
+     */
+    public static function arrayFromPairs(array $rows) : array {
+        $array = new ScopedArray();
+
+        foreach ( $rows ?? [] as $row ) {
+            $scoped_key = $row[0];
+            $value = $row[1];
+            $array[$scoped_key] = $value;
+        }
+        return $array->getData();
+    }
+
+    /**
+     * Create a list of associative arrays from rows
+     *
+     * @param array $headers
+     * @param array $rows
+     * @return array
+     */
+    public static function arrayFromRows(array $headers, array $rows) : array {
+        //the array with the results
+        $list = [];
+
+        foreach ( $rows as $row ) {
+
+            $element = new ScopedArray();
+            foreach ( $row as $index => $column ) {
+
+                $scoped_key = $headers[$index];
+                $value = $column;
+                $element[$scoped_key] = $value;
+            }
+
+            $list[] = $element->getData();
+        }
+        return $list;
+    }
 }
