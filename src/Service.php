@@ -91,13 +91,12 @@ class Service
             'q' => "'".$fileId."' in parents"
         ]);
 
-        $folder->
     }
 
     public function getFile() {
         /**
         * @var $file Google_Service_Drive_DriveFile
         */
-        $file->getModifiedTime()
+        $file->getModifiedTime();
     }
 }

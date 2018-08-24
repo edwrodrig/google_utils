@@ -48,6 +48,12 @@ class ScopedArray implements ArrayAccess
     }
 
     public function offsetSet($offset, $value) {
+        if ( is_null($offset) )
+            return;
+
+        if ( empty(trim($offset)) )
+            return;
+
         $currentScope = &$this->data;
         foreach ($this->getScope($offset) as $key) {
             $currentScope = &$currentScope[$key];
@@ -94,8 +100,8 @@ class ScopedArray implements ArrayAccess
         $array = new ScopedArray();
 
         foreach ( $rows ?? [] as $row ) {
-            $scoped_key = $row[0];
-            $value = $row[1];
+            $scoped_key = $row[0] ?? null;
+            $value = $row[1] ?? null;
             $array[$scoped_key] = $value;
         }
         return $array->getData();
