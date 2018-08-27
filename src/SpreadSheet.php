@@ -46,4 +46,14 @@ class SpreadSheet
 
     }
 
+    public function getSheet(string $title) : Sheet {
+        /** @var $sheet Sheet */
+        foreach ( $this->getSheets() as $sheet ) {
+            if ( $sheet->getTitle() == $title )
+                return $sheet;
+        }
+
+        throw new exception\SheetDoesNotExistsException($title);
+    }
+
 }
