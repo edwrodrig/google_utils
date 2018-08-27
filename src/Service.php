@@ -21,6 +21,7 @@ use Google_Service_Sheets;
  * @package edwrodrig\google_utils
  *
  * @see https://developers.google.com/resources/api-libraries/documentation/sheets/v4/php/latest/class-Google_Service_Sheets.html Service Sheet API
+ * @see https://developers.google.com/resources/api-libraries/documentation/drive/v2/php/latest/index.html Drive API
  *
  */
 class Service
@@ -91,12 +92,18 @@ class Service
             'q' => "'".$fileId."' in parents"
         ]);
 
+        return $folder;
+
     }
 
-    public function getFile() {
-        /**
-        * @var $file Google_Service_Drive_DriveFile
-        */
-        $file->getModifiedTime();
+
+    /**
+     * @param string $fileId
+     * @see https://developers.google.com/drive/api/v3/manage-downloads
+     * @return Google_Service_Drive_DriveFile
+     */
+    public function downloadFile(string $fileId) : Google_Service_Drive_DriveFile {
+        $service = $this->getDriveService();
+        return $service->files->get($fileId, ['alt' => 'media']);
     }
 }
