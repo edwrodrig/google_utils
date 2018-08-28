@@ -90,7 +90,6 @@ class ScopedArray implements ArrayAccess
         return $this->data;
     }
 
-
     /**
      * Create an associative array from pairs of key values
      * @param array $rows

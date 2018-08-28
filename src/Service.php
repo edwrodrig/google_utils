@@ -10,11 +10,13 @@ declare(strict_types=1);
 namespace edwrodrig\google_utils;
 
 
+use Generator;
 use Google_Client;
 use Google_Service_Drive;
 use Google_Service_Drive_DriveFile;
 use Google_Service_Drive_FileList;
 use Google_Service_Sheets;
+use GuzzleHttp\Psr7\Response;
 
 /**
  * Class Service
@@ -81,29 +83,79 @@ class Service
         return $values;
     }
 
-    public function getFilesInFolder(string $fileId) : Google_Service_Drive_FileList {
+    /**
+     * Get files in folder
+     *
+     * This is used for iteration
+     * @param string $fileId
+     * @return Generator|File[]
+     */
+    public function getFilesInFolder(string $fileId, int $page_size = 100) {
         $service = $this->getDriveService();
-        /**
-         * @var $folder Google_Service_Drive_FileList
-         */
+
+        /** @var $folder Google_Service_Drive_FileList */
         $folder = $service->files->listFiles([
-            'pageSize' => 100,
-            'fields' => "nextPageToken, files(contentHints/thumbnail,fileExtension,iconLink,id,name,size,thumbnailLink,webContentLink,mimeType,parents)",
+            'pageSize' => $page_size,
+            'fields' => "nextPageToken, files(id,name,modifiedTime,mimeType,parents)",
             'q' => "'".$fileId."' in parents"
         ]);
 
-        return $folder;
+        /** @var $file Google_Service_Drive_DriveFile */
+        foreach ( $folder as $file )
+            yield new File($this, $file);
 
     }
 
 
     /**
+     * Download a file from file id
+     *
+     * Prefer using {@see File::download} instead
      * @param string $fileId
      * @see https://developers.google.com/drive/api/v3/manage-downloads
-     * @return Google_Service_Drive_DriveFile
+     * @return Response
      */
-    public function downloadFile(string $fileId) : Google_Service_Drive_DriveFile {
+    public function downloadFile(string $fileId) : Response {
         $service = $this->getDriveService();
-        return $service->files->get($fileId, ['alt' => 'media']);
+
+        /** @var $response Response */
+        $response = $service->files->get($fileId, ['alt' => 'media']);
+
+        return $response;
+    }
+
+    /**
+     * Download a file from file id
+     *
+     * Prefer using {@see File::download} instead
+     * Mime types:
+     * * text/html
+     * * application/zip
+     * * text/plain
+     * * application/rtf
+     * * application/pdf
+     * @param string $fileId
+     * @param string $mime_type
+     * @see https://developers.google.com/drive/api/v3/manage-downloads
+     * @return Response
+     */
+    public function exportFile(string $fileId, string $mime_type) : Response {
+        $service = $this->getDriveService();
+
+        /** @var $response Response */
+        $response = $service->files->export($fileId, $mime_type, ['alt' => 'media']);
+
+        return $response;
+    }
+
+    /**
+     * Get a file from fileId
+     * @param string $fileId
+     * @return File
+     */
+    public function getFile(string $fileId) : File {
+        $service = $this->getDriveService();
+
+        return new File($this, $service->files->get($fileId, ['fields' => 'id,name,modifiedTime,mimeType,parents']));
     }
 }

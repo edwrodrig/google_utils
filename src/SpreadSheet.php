@@ -46,6 +46,12 @@ class SpreadSheet
 
     }
 
+    /**
+     * Get a sheet from this title
+     * @param string $title
+     * @return Sheet
+     * @throws exception\SheetDoesNotExistsException
+     */
     public function getSheet(string $title) : Sheet {
         /** @var $sheet Sheet */
         foreach ( $this->getSheets() as $sheet ) {
