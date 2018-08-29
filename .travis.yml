@@ -4,10 +4,6 @@ php:
   - 7.2
   - nightly
 
-before_install:
-    - printf "\n" | pecl install imagick
-    - sudo apt-get --reinstall install -qq language-pack-en language-pack-es
-
 addon:
     apt:
        update: true

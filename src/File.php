@@ -61,6 +61,9 @@ class File
 
     /**
      * Iterate the files inside folder
+     *
+     * Use this for iterate child files when this file is a folder
+     * @see File::isFolder()
      * @return \Generator|void
      */
     public function iterateFiles() {
@@ -73,6 +76,14 @@ class File
 
     }
 
+    /**
+     * Download
+     *
+     * This download correctly the file not matter is it is a filde or folder
+     * @param string $target_dir
+     * @param null|string $new_filename if you want to change the target filename
+     * @return string
+     */
     public function download(string $target_dir, ?string $new_filename = null) : string
     {
         if ( $this->isFolder() ) {
@@ -83,6 +94,16 @@ class File
         }
     }
 
+    /**
+     * Download file
+     *
+     * This method is for download the contents when this file is a file
+     * It must be used only by {@see File::download}
+     * @internal
+     * @param string $target_dir
+     * @param null|string $new_filename
+     * @return string
+     */
     protected function downloadFile(string $target_dir, ?string $new_filename) : string {
         $response = $this->service->downloadFile($this->drive_file->getId());
 
@@ -96,6 +117,16 @@ class File
         return $target_filename;
     }
 
+    /**
+     * Download folder
+     *
+     * This method is for download the contents when this file {@see File::isFolder() is a folder}
+     * It must be used only by {@see File::download}
+     * @internal
+     * @param string $target_dir
+     * @param null|string $new_filename
+     * @return string
+     */
     protected function downloadFolder(string $target_dir, ?string $new_filename) : string {
         $new_filename = $new_filename ?? $this->drive_file->getName();
 

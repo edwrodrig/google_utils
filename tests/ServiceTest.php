@@ -144,7 +144,7 @@ class ServiceTest extends TestCase
     public function testGetFilesInFolder() {
         $service = new Service(self::$client);
         $names = array_map(
-            function(File $file) { return $file->getName();},
+            function(File $file) { return $file->getName(); },
             iterator_to_array($service->getFilesInFolder('1RpFNqAwvm2hPflHu52mSgh9S1wclSEmC'))
         );
 
