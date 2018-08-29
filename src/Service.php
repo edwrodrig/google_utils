@@ -47,6 +47,10 @@ class Service
         $this->client = $client;
     }
 
+    /**
+     * Get Spreadsheet service
+     * @return Google_Service_Sheets
+     */
     public function getSpreadSheetService() : Google_Service_Sheets {
         if ( is_null($this->spreadsheet_service) ) {
             $this->spreadsheet_service = new Google_Service_Sheets($this->client);
@@ -54,6 +58,12 @@ class Service
         return $this->spreadsheet_service;
     }
 
+    /**
+     * Get Drive Service
+     *
+     * @internal
+     * @return Google_Service_Drive
+     */
     public function getDriveService() : Google_Service_Drive {
         if ( is_null($this->drive_service) ) {
             $this->drive_service = new Google_Service_Drive($this->client);
@@ -62,6 +72,9 @@ class Service
     }
 
     /**
+     * Get spreadsheet by Id
+     *
+     * @internal
      * @param string $spreadsheetId
      * @return SpreadSheet
      */
@@ -72,6 +85,9 @@ class Service
     }
 
     /**
+     * Get Spreadsheet values
+     *
+     *
      * @param string $spreadsheetId
      * @param string $range
      * @return array
@@ -88,6 +104,7 @@ class Service
      *
      * This is used for iteration
      * @param string $fileId
+     * @param int $page_size
      * @return Generator|File[]
      */
     public function getFilesInFolder(string $fileId, int $page_size = 100) {
@@ -150,6 +167,7 @@ class Service
 
     /**
      * Get a file from fileId
+     *
      * @param string $fileId
      * @return File
      */

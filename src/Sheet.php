@@ -12,6 +12,13 @@ namespace edwrodrig\google_utils;
 use Google_Service_Sheets_Sheet;
 use Google_Service_Sheets_Spreadsheet;
 
+/**
+ * Class Sheet
+ *
+ * Class to interact with sheet.
+ *
+ * @package edwrodrig\google_utils
+ */
 class Sheet
 {
     /**

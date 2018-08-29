@@ -1,14 +1,7 @@
 <?php
 declare(strict_types=1);
-/**
- * Created by PhpStorm.
- * User: edwin
- * Date: 21-08-18
- * Time: 14:35
- */
 
 namespace edwrodrig\google_utils;
-
 
 use Google_Service_Sheets_Spreadsheet;
 
@@ -48,6 +41,7 @@ class SpreadSheet
 
     /**
      * Get a sheet from this title
+     *
      * @param string $title
      * @return Sheet
      * @throws exception\SheetDoesNotExistsException
