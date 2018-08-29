@@ -15,9 +15,6 @@ A php library to read some Google Services
  * Read google spreadsheets and export them as a json  
 
 My infrastructure is targeted to __Ubuntu 16.04__ machines with last __php7.2__ installed from [ppa:ondrej/php](https://launchpad.net/~ondrej/+archive/ubuntu/php).
-I use some unix commands for some process like __cp__ or __ln__.
-I'm sure that there are way to make it compatible with windows but I don't have time to program it and testing,
-but I'm open for pull requests to make it more compatible.
 
 ## Documentation
 The source code is documented using [phpDocumentor](http://docs.phpdoc.org/references/phpdoc/basic-syntax.html) style,
