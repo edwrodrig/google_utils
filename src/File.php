@@ -77,6 +77,22 @@ class File
     }
 
     /**
+     * Get file by name
+     *
+     * @param string $name
+     * @return File
+     * @throws exception\FileDoesNotExistException
+     */
+    public function getFile(string $name) : File {
+        /** @var $file File */
+        foreach ( $this->iterateFiles() as $file ) {
+            if ($file->getName() === $name )
+                return $file;
+        }
+        throw new exception\FileDoesNotExistException($name);
+    }
+
+    /**
      * Download
      *
      * This download correctly the file not matter is it is a filde or folder

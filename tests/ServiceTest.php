@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace test\edwrodrig\google_utils;
 
 use DateTime;
+use edwrodrig\google_utils\exception\FileDoesNotExistException;
 use edwrodrig\google_utils\exception\SheetDoesNotExistsException;
 use edwrodrig\google_utils\File;
 use edwrodrig\google_utils\Service;
@@ -149,6 +150,33 @@ class ServiceTest extends TestCase
         );
 
         $this->assertEquals(['kula.png', 'test.txt'], $names);
+    }
+
+    /**
+     * @throws FileDoesNotExistException
+     */
+    public function testGetFileInFolder() {
+        $service = new Service(self::$client);
+
+        $folder = $service->getFile('1RpFNqAwvm2hPflHu52mSgh9S1wclSEmC');
+        $this->assertTrue($folder->isFolder());
+
+        $file = $folder->getFile('kula.png');
+        $this->assertEquals('kula.png', $file->getName());
+    }
+
+    /**
+     * @expectedException \edwrodrig\google_utils\exception\FileDoesNotExistException
+     * @expectedExceptionMessage not_existant.png
+     * @throws \edwrodrig\google_utils\exception\FileDoesNotExistException
+     */
+    public function testGetNotExistantFileInFolder() {
+        $service = new Service(self::$client);
+
+        $folder = $service->getFile('1RpFNqAwvm2hPflHu52mSgh9S1wclSEmC');
+        $this->assertTrue($folder->isFolder());
+
+        $folder->getFile('not_existant.png');
     }
 
     public function testDownloadFolder() {
