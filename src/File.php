@@ -60,6 +60,15 @@ class File
     }
 
     /**
+     * Is this file a spreadsheet
+     * @see https://developers.google.com/drive/api/v3/mime-types
+     * @return bool
+     */
+    public function isSpreadsheet() : bool {
+        return $this->drive_file->getMimeType() === 'application/vnd.google-apps.spreadsheet';
+    }
+
+    /**
      * Iterate the files inside folder
      *
      * Use this for iterate child files when this file is a folder
@@ -73,7 +82,16 @@ class File
         foreach ( $this->service->getFilesInFolder($this->drive_file->getId()) as $files ) {
             yield $files;
         }
+    }
 
+    /**
+     * Get a spreadsheet object
+     *
+     * Get a spreadsheet if the file is a valid spreadsheet
+     * @return Spreadsheet
+     */
+    public function toSpreadsheet() : Spreadsheet {
+        return $this->service->getSpreadSheetById($this->drive_file->getId());
     }
 
     /**
@@ -83,7 +101,7 @@ class File
      * @return File
      * @throws exception\FileDoesNotExistException
      */
-    public function getFile(string $name) : File {
+    public function getFileByName(string $name) : File {
         /** @var $file File */
         foreach ( $this->iterateFiles() as $file ) {
             if ($file->getName() === $name )

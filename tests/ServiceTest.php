@@ -64,6 +64,28 @@ class ServiceTest extends TestCase
     }
 
     /**
+     * @throws \edwrodrig\google_utils\exception\SheetDoesNotExistsException
+     * @throws \edwrodrig\google_utils\exception\WrongSheetFormatException
+     */
+    public function testRetrieveSpreadSheetFromFile() {
+        $service = new Service(self::$client);
+        $file = $service->getFile('1XmYTa7fS-W1QpiEgp0OnMZCrOyJ5InCVA-nl7Y0kT_A');
+        $this->assertTrue($file->isSpreadsheet());
+
+        $spreadsheet = $file->toSpreadsheet();
+
+        $sheet = $spreadsheet->getSheet('singleton');
+        $this->assertInstanceOf(Sheet::class, $sheet);
+
+        $this->assertEquals('singleton', $sheet->getTitle());
+        $this->assertEquals(
+            ['name' => 'Edwin', 'surname' => 'Rodríguez', 'mail' => ['user' => 'edwin', 'domain' => 'mail.cl']],
+            $sheet->getFormattedData()
+        );
+
+    }
+
+    /**
      * @expectedException \edwrodrig\google_utils\exception\SheetDoesNotExistsException
      * @expectedExceptionMessage not_existant
      */
@@ -161,7 +183,7 @@ class ServiceTest extends TestCase
         $folder = $service->getFile('1RpFNqAwvm2hPflHu52mSgh9S1wclSEmC');
         $this->assertTrue($folder->isFolder());
 
-        $file = $folder->getFile('kula.png');
+        $file = $folder->getFileByName('kula.png');
         $this->assertEquals('kula.png', $file->getName());
     }
 
@@ -176,7 +198,7 @@ class ServiceTest extends TestCase
         $folder = $service->getFile('1RpFNqAwvm2hPflHu52mSgh9S1wclSEmC');
         $this->assertTrue($folder->isFolder());
 
-        $folder->getFile('not_existant.png');
+        $folder->getFileByName('not_existant.png');
     }
 
     public function testDownloadFolder() {
