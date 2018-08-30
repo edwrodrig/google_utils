@@ -28,7 +28,6 @@ use GuzzleHttp\Psr7\Response;
  */
 class Service
 {
-
     /**
      * @var Google_Client
      */
@@ -168,7 +167,7 @@ class Service
      * @param string $fileId
      * @return File
      */
-    public function getFile(string $fileId) : File {
+    public function getFileById(string $fileId) : File {
         $service = $this->getDriveService();
 
         return new File($this, $service->files->get($fileId, ['fields' => 'id,name,modifiedTime,mimeType,parents']));

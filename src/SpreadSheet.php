@@ -28,6 +28,14 @@ class SpreadSheet
     }
 
     /**
+     * Get the Title of the spreadsheet
+     * @return string
+     */
+    public function getTitle() : string {
+        return $this->spreadsheet->getProperties()->getTitle();
+    }
+
+    /**
      * Get the sheets of this spreadsheet
      *
      * This method yields every sheet in the spreadsheet
@@ -54,6 +62,24 @@ class SpreadSheet
         }
 
         throw new exception\SheetDoesNotExistsException($title);
+    }
+
+    /**
+     * Download the spreadsheet
+     *
+     * @param string $target_dir
+     * @return string
+     * @throws exception\WrongSheetFormatException
+     */
+    public function download(string $target_dir) {
+
+        $target_dir = $target_dir . DIRECTORY_SEPARATOR . $this->getTitle();
+        /** @var $sheet Sheet */
+        foreach ( $this->getSheets() as $sheet ) {
+            $sheet->download($target_dir);
+        }
+
+        return $target_dir;
     }
 
 }

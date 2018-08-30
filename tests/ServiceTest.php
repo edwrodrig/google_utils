@@ -69,7 +69,7 @@ class ServiceTest extends TestCase
      */
     public function testRetrieveSpreadSheetFromFile() {
         $service = new Service(self::$client);
-        $file = $service->getFile('1XmYTa7fS-W1QpiEgp0OnMZCrOyJ5InCVA-nl7Y0kT_A');
+        $file = $service->getFileById('1XmYTa7fS-W1QpiEgp0OnMZCrOyJ5InCVA-nl7Y0kT_A');
         $this->assertTrue($file->isSpreadsheet());
 
         $spreadsheet = $file->toSpreadsheet();
@@ -145,7 +145,7 @@ class ServiceTest extends TestCase
 
     public function testGetFile() {
         $service = new Service(self::$client);
-        $file = $service->getFile('1fPKlWCD7UrB6vfdHM7xJ4JCGlMUvqzaO');
+        $file = $service->getFileById('1fPKlWCD7UrB6vfdHM7xJ4JCGlMUvqzaO');
 
         $this->assertEquals('test.txt', $file->getName());
 
@@ -161,6 +161,24 @@ class ServiceTest extends TestCase
         $this->assertEquals('other.txt', basename($filename));
         $this->assertFileExists($filename);
         $this->assertEquals(14, filesize($filename));
+
+    }
+
+    public function testDownloadSpreadsheet() {
+        $service = new Service(self::$client);
+        $file = $service->getFileById('1XmYTa7fS-W1QpiEgp0OnMZCrOyJ5InCVA-nl7Y0kT_A');
+
+
+        $this->assertEquals('spreadsheet_1', $file->getName());
+
+        $filename = $file->download($this->root->url());
+        $this->assertEquals('spreadsheet_1', basename($filename));
+        $this->assertFileExists($filename);
+
+        $this->assertFileExists($filename . DIRECTORY_SEPARATOR . 'singleton.json');
+        $this->assertFileExists($filename . DIRECTORY_SEPARATOR . 'list.json');
+
+
 
     }
 
@@ -180,7 +198,7 @@ class ServiceTest extends TestCase
     public function testGetFileInFolder() {
         $service = new Service(self::$client);
 
-        $folder = $service->getFile('1RpFNqAwvm2hPflHu52mSgh9S1wclSEmC');
+        $folder = $service->getFileById('1RpFNqAwvm2hPflHu52mSgh9S1wclSEmC');
         $this->assertTrue($folder->isFolder());
 
         $file = $folder->getFileByName('kula.png');
@@ -195,7 +213,7 @@ class ServiceTest extends TestCase
     public function testGetNotExistantFileInFolder() {
         $service = new Service(self::$client);
 
-        $folder = $service->getFile('1RpFNqAwvm2hPflHu52mSgh9S1wclSEmC');
+        $folder = $service->getFileById('1RpFNqAwvm2hPflHu52mSgh9S1wclSEmC');
         $this->assertTrue($folder->isFolder());
 
         $folder->getFileByName('not_existant.png');
@@ -203,7 +221,7 @@ class ServiceTest extends TestCase
 
     public function testDownloadFolder() {
         $service = new Service(self::$client);
-        $folder = $service->getFile('1Z2suK9ah2srGYAaRb1qXTadgwsmc1nLG');
+        $folder = $service->getFileById('1Z2suK9ah2srGYAaRb1qXTadgwsmc1nLG');
         $this->assertTrue($folder->isFolder());
         $folder_name = $folder->download($this->root->url());
         $this->assertEquals($folder->getName(), basename($folder_name));

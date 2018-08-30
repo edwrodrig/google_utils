@@ -170,4 +170,31 @@ class Sheet
         );
     }
 
+    /**
+     * @param string $target_dir
+     * @param null|string $new_filename
+     * @return string
+     * @throws exception\WrongSheetFormatException
+     */
+    public function download(string $target_dir, ?string $new_filename = null) : string {
+        $formatted_data = $this->getFormattedData();
+        if ( is_null($formatted_data) )
+            return '';
+
+        $formatted_data = json_encode($formatted_data, JSON_PRETTY_PRINT);
+        if ( $formatted_data === FALSE )
+            return '';
+
+        $new_filename = $new_filename ?? $this->getTitle() . '.json';
+
+        if ( !file_exists($target_dir) )
+            mkdir($target_dir, 0777, true);
+
+
+        $target_filename = $target_dir . DIRECTORY_SEPARATOR . $new_filename;
+        file_put_contents($target_filename, $formatted_data);
+
+        return $target_filename;
+    }
+
 }
