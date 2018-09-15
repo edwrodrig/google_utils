@@ -51,7 +51,7 @@ class ScopedArray implements ArrayAccess
         if ( is_null($offset) )
             return;
 
-        if ( empty(trim($offset)) )
+        if ( is_string($offset) && empty(trim($offset)) )
             return;
 
         $currentScope = &$this->data;

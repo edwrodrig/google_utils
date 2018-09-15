@@ -57,6 +57,17 @@ class ScopedArrayTest extends TestCase
         $this->assertEquals(['a' => ['b' => 2], 'b' => 3], $array->getData());
     }
 
+    public function testList1()
+    {
+        $array = new ScopedArray();
+        $array['a.0'] = 'A';
+        $this->assertEquals(['a' => ['A']], $array->getData());
+        $array['a.1'] = 'B';
+        $this->assertEquals(['a' => ['A', 'B']], $array->getData());
+        $array['a.0'] = 'C';
+        $this->assertEquals(['a' => ['C', 'B']], $array->getData());
+    }
+
     public function testNested2()
     {
         $array = new ScopedArray();
