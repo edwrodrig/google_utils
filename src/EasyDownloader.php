@@ -74,7 +74,7 @@ class EasyDownloader
 
         $folder->setDownloadCache($downloadCache);
 
-        $folder->download($this->targetFolder);
+        $folder->download(dirname($this->targetFolder), basename($this->targetFolder));
 
         $downloadCache->resolveHits();
         $downloadCache->save();
