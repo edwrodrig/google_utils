@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace test\edwrodrig\google_utils;
 
 use DateTime;
+use edwrodrig\google_utils\DownloadCache;
 use edwrodrig\google_utils\exception\FileDoesNotExistException;
 use edwrodrig\google_utils\exception\SheetDoesNotExistsException;
 use edwrodrig\google_utils\File;
@@ -230,6 +231,51 @@ class ServiceTest extends TestCase
         $this->assertFileExists($folder_name . DIRECTORY_SEPARATOR . 'B');
         $this->assertFileExists($folder_name . DIRECTORY_SEPARATOR . 'A' . DIRECTORY_SEPARATOR . 'C');
         $this->assertFileExists($folder_name . DIRECTORY_SEPARATOR . 'A' . DIRECTORY_SEPARATOR . 'C' . DIRECTORY_SEPARATOR . 'test.txt');
+    }
+
+    public function testDownloadFolderWithCache() {
+        $service = new Service(self::$client);
+        $folder = $service->getFileById('1Z2suK9ah2srGYAaRb1qXTadgwsmc1nLG');
+        $this->assertTrue($folder->isFolder());
+
+        $download_cache_file = $this->root->url() . '/cache.json';
+        $downloadCache = new DownloadCache($download_cache_file);
+        $folder->setDownloadCache($downloadCache);
+        $folder_name = $folder->download($this->root->url());
+
+        $downloadCache->resolveHits();
+        $downloadCache->save();
+
+        $this->assertEquals($folder->getName(), basename($folder_name));
+        $this->assertFileExists($folder_name);
+        $this->assertFileExists($folder_name . DIRECTORY_SEPARATOR . 'A');
+        $this->assertFileExists($folder_name . DIRECTORY_SEPARATOR . 'B');
+        $this->assertFileExists($folder_name . DIRECTORY_SEPARATOR . 'A' . DIRECTORY_SEPARATOR . 'C');
+        $this->assertFileExists($folder_name . DIRECTORY_SEPARATOR . 'A' . DIRECTORY_SEPARATOR . 'C' . DIRECTORY_SEPARATOR . 'test.txt');
+
+        $this->assertFileExists($download_cache_file);
+        $data = json_decode(file_get_contents($download_cache_file), true);
+
+        $this->assertArrayHasKey($folder_name . DIRECTORY_SEPARATOR . 'A' . DIRECTORY_SEPARATOR . 'C' . DIRECTORY_SEPARATOR . 'test.txt', $data);
+
+        $downloadCache = new DownloadCache($download_cache_file);
+        $folder->setDownloadCache($downloadCache);
+        $folder_name = $folder->download($this->root->url());
+
+        $downloadCache->resolveHits();
+        $downloadCache->save();
+
+        $this->assertEquals($folder->getName(), basename($folder_name));
+        $this->assertFileExists($folder_name);
+        $this->assertFileExists($folder_name . DIRECTORY_SEPARATOR . 'A');
+        $this->assertFileExists($folder_name . DIRECTORY_SEPARATOR . 'B');
+        $this->assertFileExists($folder_name . DIRECTORY_SEPARATOR . 'A' . DIRECTORY_SEPARATOR . 'C');
+        $this->assertFileExists($folder_name . DIRECTORY_SEPARATOR . 'A' . DIRECTORY_SEPARATOR . 'C' . DIRECTORY_SEPARATOR . 'test.txt');
+
+        $this->assertFileExists($download_cache_file);
+        $data = json_decode(file_get_contents($download_cache_file), true);
+
+        $this->assertArrayHasKey($folder_name . DIRECTORY_SEPARATOR . 'A' . DIRECTORY_SEPARATOR . 'C' . DIRECTORY_SEPARATOR . 'test.txt', $data);
     }
 
     public function testExportFile() {

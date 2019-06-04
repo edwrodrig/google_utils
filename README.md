@@ -16,6 +16,11 @@ A php library to read some Google Services
 
 My infrastructure is targeted to __Ubuntu 16.04__ machines with last __php7.2__ installed from [ppa:ondrej/php](https://launchpad.net/~ondrej/+archive/ubuntu/php).
 
+## How to get the credentials file
+
+ * Log in in [Google developers console](https://console.developers.google.com)
+ * Go to Credentials > New credential > Clave de cuenta de servicio
+
 ## Documentation
 The source code is documented using [phpDocumentor](http://docs.phpdoc.org/references/phpdoc/basic-syntax.html) style,
 so it should pop up nicely if you're using IDEs like [PhpStorm](https://www.jetbrains.com/phpstorm) or similar.

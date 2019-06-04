@@ -10,6 +10,9 @@ declare(strict_types=1);
 namespace edwrodrig\google_utils;
 
 use DateTime;
+use edwrodrig\google_utils\exception\FileDoesNotExistException;
+use Exception;
+use edwrodrig\google_utils\exception\WrongSheetFormatException;
 use Google_Service_Drive_DriveFile;
 
 /**
@@ -29,9 +32,18 @@ class File
      */
     private $drive_file;
 
+    /**
+     * @var DownloadCache|null
+     */
+    private $download_cache = null;
+
     public function __construct(Service $service, Google_Service_Drive_DriveFile $drive_file) {
         $this->service = $service;
         $this->drive_file = $drive_file;
+    }
+
+    public function setDownloadCache(?DownloadCache $cache) {
+        $this->download_cache = $cache;
     }
 
     /**
@@ -43,8 +55,17 @@ class File
     }
 
     /**
+     * Get the id of the file
+     * @return string
+     */
+    public function getId() : string {
+        return $this->drive_file->getId();
+    }
+
+    /**
      * Get the modification time
      * @return DateTime
+     * @throws Exception
      */
     public function getLastModificationDate() : DateTime {
         return new DateTime($this->drive_file->getModifiedTime());
@@ -79,8 +100,9 @@ class File
         if ( !$this->isFolder() )
             return;
 
-        foreach ( $this->service->getFilesInFolder($this->drive_file->getId()) as $files ) {
-            yield $files;
+        foreach ( $this->service->getFilesInFolder($this->drive_file->getId()) as $file ) {
+            $file->setDownloadCache($this->download_cache);
+            yield $file;
         }
     }
 
@@ -99,7 +121,7 @@ class File
      *
      * @param string $name
      * @return File
-     * @throws exception\FileDoesNotExistException
+     * @throws FileDoesNotExistException
      */
     public function getFileByName(string $name) : File {
         /** @var $file File */
@@ -107,7 +129,7 @@ class File
             if ($file->getName() === $name )
                 return $file;
         }
-        throw new exception\FileDoesNotExistException($name);
+        throw new FileDoesNotExistException($name);
     }
 
     /**
@@ -117,6 +139,8 @@ class File
      * @param string $target_dir
      * @param null|string $new_filename if you want to change the target filename
      * @return string
+     * @throws WrongSheetFormatException
+     * @throws Exception
      */
     public function download(string $target_dir, ?string $new_filename = null) : string
     {
@@ -134,19 +158,31 @@ class File
      *
      * This method is for download the contents when this file is a file
      * It must be used only by {@see File::download}
-     * @internal
      * @param string $target_dir
      * @param null|string $new_filename
      * @return string
+     * @throws Exception
+     * @internal
      */
     protected function downloadFile(string $target_dir, ?string $new_filename) : string {
-        $response = $this->service->downloadFile($this->drive_file->getId());
-
         $new_filename = $new_filename ?? $this->drive_file->getName();
+
+        $target_filename = $target_dir . DIRECTORY_SEPARATOR . $new_filename;
+
+        if ( $this->download_cache !== NULL ) {
+            $result = $this->download_cache->isFileUpToDate($target_filename, $this);
+
+            $this->download_cache->updateFile($target_filename, $this);
+
+            if ( $result )
+                return $target_filename;
+        }
+
         if ( !file_exists($target_dir) )
             mkdir($target_dir, 0777, true);
 
-        $target_filename = $target_dir . DIRECTORY_SEPARATOR . $new_filename;
+        $response = $this->service->downloadFile($this->drive_file->getId());
+
         file_put_contents($target_filename, $response->getBody()->getContents());
 
         return $target_filename;
@@ -157,10 +193,11 @@ class File
      *
      * This method is for download the contents when this file {@see File::isFolder() is a folder}
      * It must be used only by {@see File::download}
-     * @internal
      * @param string $target_dir
      * @param null|string $new_filename
      * @return string
+     * @throws Exception
+     * @internal
      */
     protected function downloadFolder(string $target_dir, ?string $new_filename) : string {
         $new_filename = $new_filename ?? $this->drive_file->getName();
