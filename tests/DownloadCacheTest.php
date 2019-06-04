@@ -86,7 +86,7 @@ class DownloadCacheTest extends TestCase
 
         $this->assertFileExists($download_cache_file);
         $data = json_decode(file_get_contents($download_cache_file), true);
-        
+
         $this->assertArrayHasKey('nested/A' . DIRECTORY_SEPARATOR . 'C' . DIRECTORY_SEPARATOR . 'test.txt', $data);
     }
 
