@@ -45,6 +45,7 @@ class EasyDownloaderTest extends TestCase
             ->setGoogleDriveFolderId('1Z2suK9ah2srGYAaRb1qXTadgwsmc1nLG')
             ->setTargetFolder($folder_name)
             ->setDownloadCacheFile($download_cache_file)
+            ->setDownloadCacheBaseDir($this->root->url() . '/')
             ->download();
 
         $this->assertFileExists($folder_name);
@@ -56,7 +57,7 @@ class EasyDownloaderTest extends TestCase
         $this->assertFileExists($download_cache_file);
         $data = json_decode(file_get_contents($download_cache_file), true);
 
-        $this->assertArrayHasKey($folder_name . DIRECTORY_SEPARATOR . 'A' . DIRECTORY_SEPARATOR . 'C' . DIRECTORY_SEPARATOR . 'test.txt', $data);
+        $this->assertArrayHasKey('data/' . 'A' . DIRECTORY_SEPARATOR . 'C' . DIRECTORY_SEPARATOR . 'test.txt', $data);
     }
 
 }

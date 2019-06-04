@@ -25,8 +25,11 @@ class DownloadCache
      */
     private $cache_filename;
 
-    public function __construct(string $cache_filename) {
+    private $base_dir;
+
+    public function __construct(string $cache_filename, string $base_dir) {
         $this->cache_filename = $cache_filename;
+        $this->base_dir = $base_dir;
         $this->prepareTargetDir();
 
         if ( !file_exists($this->cache_filename) )
@@ -47,6 +50,8 @@ class DownloadCache
      * @throws \Exception
      */
     public function isFileUpToDate(string $target_path, File $file) : bool {
+        $target_path = str_replace( $this->base_dir, '', $target_path);
+
         $currentFileId = $file->getId();
         $currentLastModificationDate = self::formatDateTime($file->getLastModificationDate());
 
@@ -72,6 +77,8 @@ class DownloadCache
      * @throws \Exception
      */
     public function updateFile(string $target_path, File $file) : void {
+
+        $target_path = str_replace( $this->base_dir, '', $target_path);
         $fileId = $file->getId();
         $lastModificationTime = self::formatDateTime($file->getLastModificationDate());
         $this->map[$target_path] = [
@@ -95,7 +102,7 @@ class DownloadCache
 
         foreach ( $deleted as $deleted_file ) {
             if ( file_exists($deleted_file) )
-                unlink($deleted_file);
+                unlink($this->base_dir . $deleted_file);
             unset($this->map[$deleted_file]);
         }
     }

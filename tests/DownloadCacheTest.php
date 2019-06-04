@@ -51,7 +51,7 @@ class DownloadCacheTest extends TestCase
         $this->assertTrue($folder->isFolder());
 
         $download_cache_file = $this->root->url() . '/cache.json';
-        $downloadCache = new DownloadCache($download_cache_file);
+        $downloadCache = new DownloadCache($download_cache_file, $this->root->url() . '/');
         $folder->setDownloadCache($downloadCache);
         $folder_name = $folder->download($this->root->url());
 
@@ -68,9 +68,9 @@ class DownloadCacheTest extends TestCase
         $this->assertFileExists($download_cache_file);
         $data = json_decode(file_get_contents($download_cache_file), true);
 
-        $this->assertArrayHasKey($folder_name . DIRECTORY_SEPARATOR . 'A' . DIRECTORY_SEPARATOR . 'C' . DIRECTORY_SEPARATOR . 'test.txt', $data);
+        $this->assertArrayHasKey('nested/A' . DIRECTORY_SEPARATOR . 'C' . DIRECTORY_SEPARATOR . 'test.txt', $data);
 
-        $downloadCache = new DownloadCache($download_cache_file);
+        $downloadCache = new DownloadCache($download_cache_file, $this->root->url() . '/');
         $folder->setDownloadCache($downloadCache);
         $folder_name = $folder->download($this->root->url());
 
@@ -86,8 +86,8 @@ class DownloadCacheTest extends TestCase
 
         $this->assertFileExists($download_cache_file);
         $data = json_decode(file_get_contents($download_cache_file), true);
-
-        $this->assertArrayHasKey($folder_name . DIRECTORY_SEPARATOR . 'A' . DIRECTORY_SEPARATOR . 'C' . DIRECTORY_SEPARATOR . 'test.txt', $data);
+        
+        $this->assertArrayHasKey('nested/A' . DIRECTORY_SEPARATOR . 'C' . DIRECTORY_SEPARATOR . 'test.txt', $data);
     }
 
 }

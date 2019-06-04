@@ -31,6 +31,11 @@ class EasyDownloader
     private $downloadCacheFile = null;
 
     /**
+     * @var null|string
+     */
+    private $downloadCacheBaseDir = null;
+
+    /**
      * @param string $credentialsPath
      * @return EasyDownloader
      * @throws Exception
@@ -59,6 +64,11 @@ class EasyDownloader
         return $this;
     }
 
+    public function setDownloadCacheBaseDir(string $baseDir) : self {
+        $this->downloadCacheBaseDir = $baseDir;
+        return $this;
+    }
+
     /**
      * @throws Exception
      */
@@ -74,7 +84,7 @@ class EasyDownloader
 
         $downloadCache = null;
         if ( !is_null($this->downloadCacheFile) )
-            $downloadCache = new DownloadCache($this->downloadCacheFile);
+            $downloadCache = new DownloadCache($this->downloadCacheFile, $this->downloadCacheBaseDir);
 
         $folder->setDownloadCache($downloadCache);
 
