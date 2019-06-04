@@ -40,19 +40,23 @@ class EasyDownloader
             throw new Exception(sprintf("Credentials does not exists [%s]", $credentialsPath));
 
         $this->credentialsPath = $credentialsPath;
+        return $this;
 
     }
 
     public function setGoogleDriveFolderId(string $folderId) : self {
         $this->googleDriveFolderId = $folderId;
+        return $this;
     }
 
     public function setTargetFolder(string $targetFolder) : self {
         $this->targetFolder = $targetFolder;
+        return $this;
     }
 
     public function setDownloadCacheFile(string $cacheFile) : self {
         $this->downloadCacheFile = $cacheFile;
+        return $this;
     }
 
     /**
