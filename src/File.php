@@ -158,7 +158,7 @@ class File
         } else if ( $this->isSpreadsheet() ) {
             return $this->toSpreadsheet()->download($target_dir);
         } else if ( $this->isForm() ) {
-            //SKIPPED
+            return '__google_form';
         } else {
             return $this->downloadFile($target_dir, $new_filename);
         }
