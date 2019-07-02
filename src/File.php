@@ -90,6 +90,15 @@ class File
     }
 
     /**
+     * Is this file a form
+     * @see https://developers.google.com/drive/api/v3/mime-types
+     * @return bool
+     */
+    public function isForm() : bool {
+        return $this->drive_file->getMimeType() == 'application/vnd.google-apps.form';
+    }
+
+    /**
      * Iterate the files inside folder
      *
      * Use this for iterate child files when this file is a folder
@@ -148,6 +157,8 @@ class File
             return $this->downloadFolder($target_dir, $new_filename);
         } else if ( $this->isSpreadsheet() ) {
             return $this->toSpreadsheet()->download($target_dir);
+        } else if ( $this->isForm() ) {
+            //SKIPPED
         } else {
             return $this->downloadFile($target_dir, $new_filename);
         }
